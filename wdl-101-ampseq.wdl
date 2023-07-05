@@ -18,6 +18,6 @@ task ampseq_bbmerge_process {
     ./master.sh
   >>>
   runtime {
-    docker: 'terra/Dockerfile'
+    docker: 'jorgeamaya/ci_barcode_terra'
   }
 }
