@@ -1,0 +1,438 @@
+#!/usr/bin/env Rscript
+
+args = commandArgs(trailingOnly=TRUE)
+data_dir = args[1]
+out_dir = args[2]
+exp_dir = args[3]
+
+#data_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Report/DADA2_Contamination/'
+#data_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Report/Merge/'
+#out_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Report/'
+#exp_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/'
+
+if (!require("ggplot2")) {
+  install.packages("ggplot2", repos="http://cran.rstudio.com/")
+  library("ggplot2")
+}
+if (!require("viridis")) {
+  install.packages("viridis", repos="http://cran.rstudio.com/")
+  library("viridis")
+}
+if (!require("reshape")) {
+  install.packages("reshape", repos="http://cran.rstudio.com/")
+  library("reshape")
+}
+if (!require("gridExtra")) {
+  install.packages("gridExtra", repos="http://cran.rstudio.com/")
+  library("gridExtra")
+}
+
+df = data.frame(sequence = character(),
+                abundance = integer(),
+                forward = integer(),
+                reverse = integer(),
+                nmatch = integer(),
+                nmismatch = integer(),
+                nindel = integer(),
+                prefer = integer(),
+                accept = character(),
+                forward_barcode = character(),
+                reverse_barcode = character(),
+                forward_distance = numeric(),
+                reverse_distance = numeric(),
+                five_prime_end = character(),
+                three_prime_end = character(),
+                match_status = numeric(),
+                insert_size = numeric(),
+                stringsAsFactors = FALSE)
+
+file_list <- list.files(path = data_dir, pattern = "\\.tsv$")
+file_list = file_list[file_list != "bbmergefields.tsv"]
+
+# Loop through each file and append to the data frame row-wise
+# This has to be done differently depending on whether the contamination
+# report is being written from BBMerge or DADA2
+
+if(basename(data_dir) == 'Merge'){
+  for (file in file_list) {
+    file_path = paste0(path = data_dir, file) # current directory assumed
+    if (file.info(file_path)$size == 1) {
+      next
+    }
+    data <- read.csv(file_path, sep="\t")     # read file as data frame
+    data$sample_id <- sub("_[^_]*$", "", file)
+    df <- rbind(df, data)           # append data frame to df
+  }
+} else {
+  #For DADA2_Contamination
+  empty_samples = c()
+  for (file in file_list) {
+    file_path = paste0(path = data_dir, file) # current directory assumed
+    if (file.info(file_path)$size == 1) {
+      next
+    }
+    data <- read.csv(file_path, sep="\t")     # read file as data frame
+    if (nrow(data) == 0) {
+      empty_samples = c(empty_samples, sub("_[^_]*$", "", file))
+    } else {
+      data$sample_id <- sub("_[^_]*$", "", file)
+      df <- rbind(df, data)           # append data frame to df
+    }
+  }
+}
+
+# Load the experiment list from a one column csv file
+samples_order = read.csv(file.path(exp_dir, "experiments10c.csv"), sep = ",", header = FALSE)$V1
+barcodes = read.csv(file.path(exp_dir, "barcodes_fw.csv"), sep = ",", header = FALSE)$V1
+revbarcodes = read.csv(file.path(exp_dir, "barcodes_rv.csv"), sep = ",", header = FALSE)$V1
+
+#Handle empty dada2 file
+#if(basename(data_dir) == 'DADA2_Contamination'){
+#  write.csv(empty_samples, file=file.path(out_dir, "drop_samples_dada2.tsv"), 
+#            row.names = FALSE,
+#            quote = FALSE)
+#  samples_order = samples_order[!samples_order %in% empty_samples]
+#}
+
+###################################
+###MATCH STATUS PER SAMPLE ID #####
+###################################
+#Subset the table to the desired experiments
+df = df[df$sample_id %in% samples_order,] 
+
+m_sample_status = table(df[,c("sample_id", "match_status")])
+m_sample_status_melted = melt(m_sample_status, id.vars=c("sample_id", "match_status"))
+
+m_sample_status_p = round(m_sample_status/rowSums(m_sample_status), 2)
+m_sample_status_p_melted = melt(m_sample_status_p, id.vars=c("sample_id", "match_status"))
+
+m_sample_status_melted$sample_id = factor(m_sample_status_melted$sample_id,
+                                          levels=rev(samples_order))
+
+m_sample_status_p_melted$sample_id = factor(m_sample_status_p_melted$sample_id,
+                                          levels=rev(samples_order))
+
+match_order = c("Match",
+                "Missmatch",
+                "Forward_Match_Reverse_Missmatch",
+                "Forward_Match_Reverse_Missing",
+                "Forward_Missmatch_Reverse_Match",
+                "Forward_Missing_Reverse_Match",
+                "Forward_Missmatch_Reverse_Missing",
+                "Reverse_Missmatch_Forward_Missing",
+                "No_barcodes")
+
+m_sample_status_melted$match_status = factor(m_sample_status_melted$match_status, levels=match_order)
+
+m_sample_status_p_melted$match_status = factor(m_sample_status_p_melted$match_status, levels=match_order)
+
+plotabs = ggplot(m_sample_status_melted, aes(match_status, sample_id)) +    
+  geom_tile(aes(fill = value)) +
+  guides(fill = guide_colourbar(title = "Merged reads count")) +
+  scale_fill_viridis() + theme_bw() +
+  xlab("Match Status") + 
+  ylab("Experiment/Sample ID") +
+  theme(legend.position="top",
+        legend.key.width= unit(0.5, 'in'),
+        axis.text.x = element_text(angle = 45, hjust=1)) 
+
+plotper = ggplot(m_sample_status_p_melted, aes(match_status, sample_id)) +   
+  geom_tile(aes(fill = value)) +
+  guides(fill = guide_colourbar(title = "Proportion of merged reads")) +
+  scale_fill_viridis(option = "inferno") + theme_bw() +
+  xlab("Match Status") + 
+  ylab("Experiment/Sample ID") +
+  theme(legend.position="top",
+        legend.key.width= unit(0.5, 'in'),
+        axis.text.x = element_text(angle = 45, hjust=1)) 
+
+pdf(file.path(out_dir, "Match_report_abs.pdf"), width = 11, height = 20)
+print(plotabs)
+dev.off()
+
+pdf(file.path(out_dir, "Match_report_per.pdf"), width = 11, height = 20)
+print(plotper)
+dev.off()
+
+###################################
+###MATCH MATRIX BETWEEN BARCODES###
+###################################
+m_sample_status = table(df[,c("forward_barcodes", "reverse_barcodes")])
+m_sample_status_melted = melt(m_sample_status, id.vars=c("forward_barcodes", "reverse_barcodes"))
+
+m_sample_status_p = round(m_sample_status/rowSums(m_sample_status), 2)
+m_sample_status_p_melted = melt(m_sample_status_p, id.vars=c("forward_barcodes", "reverse_barcodes"))
+
+m_sample_status_melted$forward_barcode = factor(m_sample_status_melted$forward_barcode,
+                                                levels = barcodes)
+
+m_sample_status_melted$reverse_barcode = factor(m_sample_status_melted$reverse_barcode,
+                                                levels = rev(revbarcodes))
+
+m_sample_status_p_melted$forward_barcode = factor(m_sample_status_p_melted$forward_barcode,
+                                                levels = barcodes)
+
+m_sample_status_p_melted$reverse_barcode = factor(m_sample_status_p_melted$reverse_barcode,
+                                                levels = rev(revbarcodes))
+
+plotabs = ggplot(m_sample_status_melted, aes(forward_barcode, reverse_barcode)) +    
+  geom_tile(aes(fill = value)) +
+  scale_fill_viridis() + theme_bw() +
+  guides(fill = guide_colourbar(title = "Match counts")) +
+  xlab("Forward Barcode") + 
+  ylab("Reverse Barcode") +
+  theme(legend.position="top",
+        legend.key.width= unit(0.5, 'in')) 
+
+plotper = ggplot(m_sample_status_p_melted, aes(forward_barcode, reverse_barcode)) +   
+  geom_tile(aes(fill = value)) +
+  scale_fill_viridis(option = "inferno") + theme_bw() +
+  guides(fill = guide_colourbar(title = "Match proportion against forward barcode")) +
+  xlab("Forward Barcode") + 
+  ylab("Reverse Barcode") +
+  theme(legend.position="top",
+        legend.key.width= unit(0.5, 'in')) 
+
+pdf(file.path(out_dir, "Barcode_report_abs.pdf"), width = 18, height = 18)
+print(plotabs)
+dev.off()
+
+pdf(file.path(out_dir, "Barcode_report_per.pdf"), width = 18, height = 18)
+print(plotper)
+dev.off()
+
+###################################
+###BARCODES HAMMING DISTANCES   ###
+###################################
+
+m_sample_status = table(df[,c("forward_barcodes", "forward_distances")])
+m_sample_status_p = m_sample_status/rowSums(m_sample_status)
+m_sample_status_p_melted = melt(m_sample_status_p, id.vars=c("forward_barcodes", "forward_distances"))
+
+m_sample_status_p_melted = m_sample_status_p_melted[-which(m_sample_status_p_melted == 'NULL'),]
+
+m_sample_status_p_melted_reshaped <- reshape(m_sample_status_p_melted, direction = "wide", idvar = "forward_barcodes", timevar = "forward_distances")
+
+if (!'value.0' %in% colnames(m_sample_status_p_melted_reshaped)){
+  m_sample_status_p_melted_reshaped$value.0 = rep(0,nrow(m_sample_status_p_melted_reshaped))
+}
+
+if (!'value.1' %in% colnames(m_sample_status_p_melted_reshaped)){
+  m_sample_status_p_melted_reshaped$value.1 = rep(0,nrow(m_sample_status_p_melted_reshaped))
+}
+
+if (!'value.2' %in% colnames(m_sample_status_p_melted_reshaped)){
+  m_sample_status_p_melted_reshaped$value.2 = rep(0,nrow(m_sample_status_p_melted_reshaped))
+}
+
+m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[, c("forward_barcodes",
+                                                                          "value.0",
+                                                                          "value.1",
+                                                                          "value.2")]
+
+colnames(m_sample_status_p_melted_reshaped) = c("Forward Barcode", "0", "1", "2")
+
+forward_order = barcodes[-which(barcodes == 'NULL')]
+m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[match(forward_order, m_sample_status_p_melted_reshaped[,1]),]
+
+write.table(m_sample_status_p_melted_reshaped, 
+            file=file.path(out_dir, "hamming_forward.tsv"), 
+            quote = FALSE, 
+            sep = "\t", 
+            row.names = FALSE,
+            col.names = TRUE)
+
+m_sample_status = table(df[,c("reverse_barcodes", "reverse_distances")])
+m_sample_status_p = m_sample_status/rowSums(m_sample_status)
+m_sample_status_p_melted = melt(m_sample_status_p, id.vars=c("reverse_barcodes", "reverse_distances"))
+
+m_sample_status_p_melted = m_sample_status_p_melted[-which(m_sample_status_p_melted == 'NULL'),]
+
+m_sample_status_p_melted_reshaped <- reshape(m_sample_status_p_melted, direction = "wide", idvar = "reverse_barcodes", timevar = "reverse_distances")
+
+if (!'value.0' %in% colnames(m_sample_status_p_melted_reshaped)){
+  m_sample_status_p_melted_reshaped$value.0 = rep(0,nrow(m_sample_status_p_melted_reshaped))
+}
+
+if (!'value.1' %in% colnames(m_sample_status_p_melted_reshaped)){
+  m_sample_status_p_melted_reshaped$value.1 = rep(0,nrow(m_sample_status_p_melted_reshaped))
+}
+
+if (!'value.2' %in% colnames(m_sample_status_p_melted_reshaped)){
+  m_sample_status_p_melted_reshaped$value.2 = rep(0,nrow(m_sample_status_p_melted_reshaped))
+}
+
+m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[, c("reverse_barcodes",
+                                                                          "value.0",
+                                                                          "value.1",
+                                                                          "value.2")]
+
+colnames(m_sample_status_p_melted_reshaped) = c("Reverse Barcode", "0", "1", "2")
+
+reverse_order = revbarcodes[-which(revbarcodes == 'NULL')]
+m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[match(reverse_order, m_sample_status_p_melted_reshaped[,1]),]
+ 
+write.table(m_sample_status_p_melted_reshaped, 
+            file=file.path(out_dir, "hamming_reverse.tsv"), 
+            quote = FALSE, 
+            sep = "\t", 
+            row.names = FALSE,
+            col.names = TRUE)
+        
+###################################
+###INSERT SIZE DISTRIBUTION     ###
+###################################
+
+insert_size = sort(df$insert_size)
+
+png(file.path(out_dir, "Insert_size.png"))
+barplot(insert_size, xaxt='n',
+        ylab = "Insert size",
+        xlab = "Read number",
+        main = "Insert size distribution")
+axis(side=1, 
+     at=seq(0, length(df$insert_size), by=500000), 
+     labels=seq(0, length(df$insert_size), by=500000), 
+     cex.axis=1,
+     ) 
+dev.off()
+
+###################################
+########   FLAG ALGORITHM       ###
+###################################
+#DISAGGREGATED REPORT
+
+barcodes = read.csv(file.path(dirname(dirname(data_dir)), "Data", 'barcodes_matches.csv'), sep = ",", header = TRUE)
+contamination_threshold = 0.5
+
+if(basename(data_dir) == 'Merge'){
+  missmatch_df = df
+  missmatch_df$barcode_pair = paste0(missmatch_df$forward_barcode, "/", missmatch_df$reverse_barcode)
+
+  m_sample_status = table(missmatch_df[,c("sample_id", "barcode_pair")])
+  m_sample_status_p = round(m_sample_status/rowSums(m_sample_status), 3)
+  m_sample_status_p_melted = melt(m_sample_status_p, id.vars=c("sample_id", "barcode_pair"))
+
+  m_sample_status_p_melted_reshaped = as.data.frame.matrix(xtabs(value ~ sample_id + barcode_pair, data = m_sample_status_p_melted))
+
+  m_sample_status_p_melted_reshaped$sample_id = rownames(m_sample_status_p_melted_reshaped)
+  m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[match(samples_order, m_sample_status_p_melted_reshaped$sample_id),]
+
+  mergedata = read.csv(file.path(data_dir, "bbmergefields.tsv"), sep="\t", header=TRUE)
+  mergedata = mergedata[match(samples_order, mergedata$SampleID),]
+
+  m_sample_status_p_melted_reshaped$Well_Productivity = mergedata$Joined
+  m_sample_status_p_melted_reshaped$Productivity_Flag = mergedata$Joined < 1000
+  
+  #Adjust table to include samples with no reads
+  rows = rownames(m_sample_status_p_melted_reshaped) 
+  no_mergers = samples_order[!rows %in% samples_order]
+  rows[which(rows == 'NA')] = no_mergers  
+  rownames(m_sample_status_p_melted_reshaped) = rows
+  
+  #Fill the threshold and wrong barcode combinations flags
+  Below_Threshold_Flag = vector()
+  Wrong_Barcode_Comb_Flag = vector()
+  
+  for (sample in rownames(m_sample_status_p_melted_reshaped)) {
+    print(sample)
+    if (!sample %in% no_mergers) {
+      tmp = m_sample_status_p_melted_reshaped[sample, 
+                                              !colnames(m_sample_status_p_melted_reshaped) %in% c("sample_id", "Productivity_Flag", "Well_Productivity")]
+      abs_values <- sapply(tmp, function(x) abs(x))
+      column_with_max_abs <- names(tmp)[which.max(abs_values)]
+      max_freq_barcodes = unlist(barcodes[barcodes$sample_id == sample, c("Forward", "Reverse")])
+      names(max_freq_barcodes) = NULL
+      
+      below_thres = tmp[which.max(abs_values)] < 0.5
+      are_equal = !identical(strsplit(column_with_max_abs, "/")[[1]], max_freq_barcodes)
+      
+      Below_Threshold_Flag = c(Below_Threshold_Flag, below_thres)
+      Wrong_Barcode_Comb_Flag = c(Wrong_Barcode_Comb_Flag, are_equal)
+    }else{
+      Below_Threshold_Flag = c(Below_Threshold_Flag, NA)
+      Wrong_Barcode_Comb_Flag = c(Wrong_Barcode_Comb_Flag, NA)
+    }
+  }
+  
+  m_sample_status_p_melted_reshaped$Below_Threshold_Flag = Below_Threshold_Flag
+  m_sample_status_p_melted_reshaped$Wrong_Barcode_Comb_Flag = Wrong_Barcode_Comb_Flag
+  m_sample_status_p_melted_reshaped$Flagged_well = m_sample_status_p_melted_reshaped$Productivity_Flag |
+    m_sample_status_p_melted_reshaped$Below_Threshold_Flag |
+    m_sample_status_p_melted_reshaped$Wrong_Barcode_Comb_Flag
+  
+  m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[,
+                                                                        !colnames(m_sample_status_p_melted_reshaped) %in% c("sample_id")]
+  
+  write.table(m_sample_status_p_melted_reshaped, 
+              file=file.path(out_dir, "barcodes_report_bbmerge.tsv"), 
+              quote = FALSE, 
+              sep = "\t", 
+              row.names = TRUE,
+              col.names = TRUE)
+} else { #Process DADA2 contamination report
+  missmatch_df = df
+  missmatch_df$barcode_pair = paste0(missmatch_df$forward_barcode, "/", missmatch_df$reverse_barcode)
+  
+  m_sample_status = table(missmatch_df[,c("sample_id", "barcode_pair")])
+  m_sample_status_p = round(m_sample_status/rowSums(m_sample_status), 3)
+  m_sample_status_p_melted = melt(m_sample_status_p, id.vars=c("sample_id", "barcode_pair"))
+  
+  m_sample_status_p_melted_reshaped = as.data.frame.matrix(xtabs(value ~ sample_id + barcode_pair, data = m_sample_status_p_melted))
+  
+  m_sample_status_p_melted_reshaped$sample_id = rownames(m_sample_status_p_melted_reshaped)
+  m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[match(samples_order, m_sample_status_p_melted_reshaped$sample_id),]
+  
+  mergedata = read.csv(file.path(dirname(dirname(data_dir)), 
+                                 "Results", "DADA2_Contamination", "seqtab.tsv"), 
+                       sep="\t", header=TRUE)
+  mergedata <- mergedata[match(samples_order, row.names(mergedata)), ]
+  
+  m_sample_status_p_melted_reshaped$Well_Productivity = rowSums(mergedata)
+  m_sample_status_p_melted_reshaped$Productivity_Flag = m_sample_status_p_melted_reshaped$Well_Productivity < 1000
+  
+  #Adjust table to include samples with no reads
+  rows = rownames(m_sample_status_p_melted_reshaped) 
+  no_mergers = samples_order[!rows %in% samples_order]
+  rows[which(rows == 'NA')] = no_mergers  
+  rownames(m_sample_status_p_melted_reshaped) = rows
+  
+  Below_Threshold_Flag = vector()
+  Wrong_Barcode_Comb_Flag = vector() 
+  
+  for (sample in rownames(m_sample_status_p_melted_reshaped)) {
+    print(sample)
+    if (!sample %in% no_mergers) {
+      tmp = m_sample_status_p_melted_reshaped[sample, 
+                                              !colnames(m_sample_status_p_melted_reshaped) %in% c("sample_id", "Productivity_Flag", "Well_Productivity")]
+      abs_values <- sapply(tmp, function(x) abs(x))
+      column_with_max_abs <- names(tmp)[which.max(abs_values)]
+      max_freq_barcodes = unlist(barcodes[barcodes$sample_id == sample, c("Forward", "Reverse")])
+      names(max_freq_barcodes) = NULL
+      
+      below_thres = tmp[which.max(abs_values)] < 0.5
+      are_equal = !identical(strsplit(column_with_max_abs, "/")[[1]], max_freq_barcodes)
+      
+      Below_Threshold_Flag = c(Below_Threshold_Flag, below_thres)
+      Wrong_Barcode_Comb_Flag = c(Wrong_Barcode_Comb_Flag, are_equal)
+    }else{
+      Below_Threshold_Flag = c(Below_Threshold_Flag, NA)
+      Wrong_Barcode_Comb_Flag = c(Wrong_Barcode_Comb_Flag, NA)
+    }
+  }
+  
+  m_sample_status_p_melted_reshaped$Below_Threshold_Flag = Below_Threshold_Flag
+  m_sample_status_p_melted_reshaped$Wrong_Barcode_Comb_Flag = Wrong_Barcode_Comb_Flag
+  m_sample_status_p_melted_reshaped$Flagged_well = m_sample_status_p_melted_reshaped$Productivity_Flag |
+    m_sample_status_p_melted_reshaped$Below_Threshold_Flag |
+    m_sample_status_p_melted_reshaped$Wrong_Barcode_Comb_Flag
+  
+  m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[,
+                                                                        !colnames(m_sample_status_p_melted_reshaped) %in% c("sample_id")]
+  write.table(m_sample_status_p_melted_reshaped, 
+              file=file.path(out_dir, "barcodes_report_dada2.tsv"), 
+              quote = FALSE, 
+              sep = "\t", 
+              row.names = TRUE,
+              col.names = TRUE)
+}
