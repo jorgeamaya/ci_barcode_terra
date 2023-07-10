@@ -1,6 +1,6 @@
 version 1.0
 
-workflow ampseq_bbmerge {
+workflow amplicon_decontamination_detect {
   input {
       String path_to_fq 
       String pattern_fw = "*_L001_R1_001.fastq.gz"
