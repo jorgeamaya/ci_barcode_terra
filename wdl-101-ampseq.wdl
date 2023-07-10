@@ -175,7 +175,7 @@ task ampseq_bbmerge_process {
 	}
 	command <<<
 	set -euxo pipefail
-	gsutil -m rsync -Cr ~{path_to_fq} fq_dir/
+	gsutil -m cp -r ~{path_to_fq} fq_dir/
 	python Code/Amplicon_TerraPipeline.py --config ~{write_json(in_map)} --overlap_reads --meta --repo > stdout_string.txt
 	>>>
 	output {
