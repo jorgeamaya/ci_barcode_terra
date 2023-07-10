@@ -8,9 +8,9 @@ workflow amplicon_decontamination_detect {
       Int read_maxlength = 200
       Int pairread_minlength = 100
       Int merge_minlength = 100
-      File barcodes_file = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/barcodes.fasta"
-      File pr1 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_fw.fasta"
-      File pr2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_rv.fasta"
+      File barcodes_file
+      File pr1 
+      File pr2 
       String Class = "parasite"
       String maxEE = "5,5"
       String trimRight = "0,0"
@@ -22,14 +22,14 @@ workflow amplicon_decontamination_detect {
       String saveRdata = ""
       Int justConcatenate = 0
       Int maxMismatch = 0
-      String path_to_DADA2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Code"
-      String overlap_pr1 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_overlap_fw.fasta"
-      String overlap_pr2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_overlap_rv.fasta"
-      String reference = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/pf3d7_ref_updated_v4.fasta"
+      File path_to_DADA2
+      File overlap_pr1 
+      File overlap_pr2 
+      File reference
       String adjust_mode = "absolute"
-      String path_to_snv = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/snv_filters.txt"
+      File path_to_snv 
       String no_ref = "False"
-      String reference2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/pfdd2_ref_updated_v3.fasta"
+      File reference2 
       String strain = "3D7"
       String strain2 = "DD2"
       String polyN = "5"
@@ -91,15 +91,15 @@ workflow amplicon_decontamination_detect {
 
 task ampseq_bbmerge_process {
   input {
-	  String path_to_fq #= "gs://fc-6c62a345-db17-4e9f-acd2-38a0f624eb9b/2023_07_07_MiSeq_Barcoding3/"
+	  String path_to_fq 
 	  String pattern_fw = "*_L001_R1_001.fastq.gz"
 	  String pattern_rv = "*_L001_R2_001.fastq.gz"
 	  Int read_maxlength = 200
 	  Int pairread_minlength = 100
 	  Int merge_minlength = 100
-	  File barcodes_file = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/barcodes.fasta"
-	  File pr1 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_fw.fasta"
-	  File pr2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_rv.fasta"
+	  File barcodes_file
+	  File pr1 
+	  File pr2
 	  String Class = "parasite"
 	  String maxEE = "5,5"
 	  String trimRight = "0,0"
@@ -111,14 +111,14 @@ task ampseq_bbmerge_process {
 	  String saveRdata = ""
 	  Int justConcatenate = 0
 	  Int maxMismatch = 0
-	  String path_to_DADA2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Code"
-	  String overlap_pr1 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_overlap_fw.fasta"
-	  String overlap_pr2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_overlap_rv.fasta"
-	  String reference = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/pf3d7_ref_updated_v4.fasta"
+	  File path_to_DADA2
+	  File overlap_pr1 
+	  File overlap_pr2
+	  File reference
 	  String adjust_mode = "absolute"
-	  String path_to_snv = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/snv_filters.txt"
+	  File path_to_snv 
 	  String no_ref = "False"
-	  String reference2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/pfdd2_ref_updated_v3.fasta"
+	  File reference2
 	  String strain = "3D7"
 	  String strain2 = "DD2"
 	  String polyN = "5"
@@ -175,7 +175,7 @@ task ampseq_bbmerge_process {
   }
   command <<<
     gsutil -m rsync -er ~{path_to_fq} fq_dir/
-    python Code/Amplicon_TerraPipeline.py --config ~{write_json(in_map)} --overlap_reads > stdout_string.txt
+    python Code/Amplicon_TerraPipeline.py --config ~{write_json(in_map)} --overlap_reads --meta --repo > stdout_string.txt
   >>>
   output {
     File config_MiSeq = write_json(in_map)
