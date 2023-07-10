@@ -22,7 +22,6 @@ workflow amplicon_decontamination_detect {
       String saveRdata = ""
       Int justConcatenate = 0
       Int maxMismatch = 0
-      Int maxMismatch = 0
       String path_to_DADA2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Code"
       String overlap_pr1 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_overlap_fw.fasta"
       String overlap_pr2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_overlap_rv.fasta"
@@ -64,7 +63,6 @@ workflow amplicon_decontamination_detect {
       omegaA = omegaA,
       saveRdata = saveRdata,
       justConcatenate = justConcatenate,
-      maxMismatch = maxMismatch,
       maxMismatch = maxMismatch,
       path_to_DADA2 = path_to_DADA2,
       overlap_pr1 = overlap_pr1,
@@ -113,7 +111,6 @@ task ampseq_bbmerge_process {
 	  String saveRdata = ""
 	  Int justConcatenate = 0
 	  Int maxMismatch = 0
-	  Int maxMismatch = 0
 	  String path_to_DADA2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Code"
 	  String overlap_pr1 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_overlap_fw.fasta"
 	  String overlap_pr2 = "/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Data/primers_overlap_rv.fasta"
@@ -155,7 +152,6 @@ task ampseq_bbmerge_process {
     "omegaA": omegaA,
     "saveRdata": saveRdata,
     "justConcatenate": justConcatenate,
-    "maxMismatch": maxMismatch,
     "maxMismatch": maxMismatch,
     "path_to_DADA2": path_to_DADA2,
     "overlap_pr1": overlap_pr1,
