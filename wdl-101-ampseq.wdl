@@ -85,7 +85,7 @@ workflow amplicon_decontamination_detect {
       verbose = verbose
   }
   output {
-    File stdout_string = ampseq_bbmerge_process.ampseq_bbmerge_process
+    File stdout_string = ampseq_bbmerge_process.ampseq_bbmerge_process_stdout
   }
 }
 
@@ -174,12 +174,13 @@ task ampseq_bbmerge_process {
     "verbose": verbose
   }
   command <<<
+    set -euxo pipefail
     gsutil -m rsync -er ~{path_to_fq} fq_dir/
     python Code/Amplicon_TerraPipeline.py --config ~{write_json(in_map)} --overlap_reads --meta --repo > stdout_string.txt
   >>>
   output {
     File config_MiSeq = write_json(in_map)
-    File ampseq_bbmerge_process = "stdout_string.txt"
+    File ampseq_bbmerge_process_stdout = "stdout_string.txt"
   }
   runtime {
     cpu: 1
