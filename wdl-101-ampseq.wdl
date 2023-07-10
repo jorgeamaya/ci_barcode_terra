@@ -43,7 +43,49 @@ workflow ampseq_bbmerge {
       String amp_mask = "None"
       String verbose = "False"
   }
-  call ampseq_bbmerge_process
+  call ampseq_bbmerge_process {
+    input:
+      path_to_fq = path_to_fq,
+      pattern_fw = pattern_fw,
+      pattern_rv = pattern_rv,
+      read_maxlength = read_maxlength,
+      pairread_minlength = pairread_minlength,
+      merge_minlength = merge_minlength,
+      barcodes_file = barcodes_file,
+      pr1 = pr1,
+      pr2 = pr2,
+      Class = Class,
+      maxEE = maxEE,
+      trimRight = trimRight,
+      minLen = minLen,
+      truncQ = truncQ,
+      matchIDs = matchIDs,
+      max_consist = max_consist,
+      omegaA = omegaA,
+      saveRdata = saveRdata,
+      justConcatenate = justConcatenate,
+      maxMismatch = maxMismatch,
+      maxMismatch = maxMismatch,
+      path_to_DADA2 = path_to_DADA2,
+      overlap_pr1 = overlap_pr1,
+      overlap_pr2 = overlap_pr2,
+      reference = reference,
+      adjust_mode = adjust_mode,
+      path_to_snv = path_to_snv,
+      no_ref = no_ref,
+      reference2 = reference2,
+      strain = strain,
+      strain2 = strain2,
+      polyN = polyN,
+      min_reads = min_reads,
+      min_samples = min_samples,
+      max_snv_dist = max_snv_dist,
+      max_indel_dist = max_indel_dist,
+      include_failed = include_failed,
+      exclude_bimeras = exclude_bimeras,
+      amp_mask = amp_mask,
+      verbose = verbose
+  }
   output {
     File stdout_string = ampseq_bbmerge_process.ampseq_bbmerge_process
   }
