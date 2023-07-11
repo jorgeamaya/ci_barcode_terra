@@ -14,8 +14,8 @@ if (!require("viridis")) {
 
 mergedata <- read.csv(file.path(data_dir, "bbmergefields.tsv"), sep = "\t", header = TRUE)
 
-pdf(file.path(out_dir, "BBmerge_performance_absolute_report.pdf"), width = 12)
-barplot(table(mergedata$Pairs))
+svg(file.path(out_dir, "BBmerge_performance_absolute_report.pdf"), width = 12)
+barplot(mergedata[,2] ~ mergedata[,1], las = 2, cex.names = 1)
 dev.off()
 
 #Subset the table to the desired experiments
