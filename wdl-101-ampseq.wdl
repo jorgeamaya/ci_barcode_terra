@@ -175,14 +175,16 @@ task ampseq_bbmerge_process {
 	}
 	File config_json = write_json(in_map)
 	command <<<
-	set -euxo pipefail
+	#set -euxo pipefail
 	set -x 
 	gsutil -m cp -r ~{path_to_fq} fq_dir/
 	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo
+	find . -type f
 	>>>
 	output {
 		File config_MiSeq = config_json
 		File ampseq_bbmerge_process_stdout = stdout()
+		File ampseq_bbmerge_process_stderr = stderr()
 		File rawfastq_files = "Results/Fq_metadata/rawfilelist.tsv"
 	}
 	runtime {

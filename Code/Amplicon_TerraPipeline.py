@@ -113,8 +113,8 @@ def main():
 	### EXEC
 
 	#Set stdout and stderr for performance report
-	sys.stdout = open((res_dir + "/stdout.txt"),"a")
-	sys.stderr = open((res_dir + "/stderr.txt"),"a")
+#	sys.stdout = open((res_dir + "/stdout.txt"),"a")
+#	sys.stderr = open((res_dir + "/stderr.txt"),"a")
 
 	#Create metadata files
 	if args.meta:
