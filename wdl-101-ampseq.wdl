@@ -86,7 +86,7 @@ workflow amplicon_decontamination_detect {
 	}
 	output {
 		File stdout_string = ampseq_bbmerge_process.ampseq_bbmerge_process_stdout
-		File merge_tar = ampseq_bbmerge_process.merge_tar
+		File merge_tar_file = ampseq_bbmerge_process.merge_tar
 	}
 }
 
@@ -208,8 +208,3 @@ task ampseq_bbmerge_process {
 	}
 }
 
-#task adaptor_removal_step {
-#	input {
-#		File rawfilelist	
-#	}
-#}
