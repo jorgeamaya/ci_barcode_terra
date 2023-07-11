@@ -133,7 +133,7 @@ task ampseq_bbmerge_process {
 	}
 
 	Map[String, String] in_map = {
-		"path_to_fq": path_to_fq,
+		"path_to_fq": "fq_dir",
 		"pattern_fw": pattern_fw,
 		"pattern_rv": pattern_rv,
 		"read_maxlength": read_maxlength,
@@ -175,11 +175,10 @@ task ampseq_bbmerge_process {
 	}
 	File config_json = write_json(in_map)
 	command <<<
-	#set -euxo pipefail
+	set -euxo pipefail
 	set -x 
 	gsutil -m cp -r ~{path_to_fq} fq_dir/
 	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo
-	echo $?
 	>>>
 	output {
 		File config_MiSeq = config_json
@@ -194,5 +193,11 @@ task ampseq_bbmerge_process {
 		preemptible: 3
 		maxRetries: 1
 		docker: 'jorgeamaya/ci_barcode_terra:v1'
+	}
+}
+
+task adaptor_removal_step {
+	input {
+		File rawfilelist	
 	}
 }
