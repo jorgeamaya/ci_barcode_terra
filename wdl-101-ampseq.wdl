@@ -182,7 +182,7 @@ task ampseq_bbmerge_process {
 	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo
 	find . -type f
 	cat Results/stdout.txt
-	cat Results/stdout.txt
+	cat Results/stderr.txt
 	>>>
 	output {
 		File config_MiSeq = config_json
