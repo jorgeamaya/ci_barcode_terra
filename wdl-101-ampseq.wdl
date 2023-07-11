@@ -86,6 +86,7 @@ workflow amplicon_decontamination_detect {
 	}
 	output {
 		File stdout_string = ampseq_bbmerge_process.ampseq_bbmerge_process_stdout
+		File merge_tar = ampseq_bbmerge_process.merge_tar
 	}
 }
 
@@ -184,6 +185,7 @@ task ampseq_bbmerge_process {
 
 	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo --adaptor_removal --merge
 
+	tar -czvf Merge.tar.gz Results/Merge
 	find . -type f
 	cat Results/stdout.txt
 	cat Results/stderr.txt
@@ -193,6 +195,7 @@ task ampseq_bbmerge_process {
 		File ampseq_bbmerge_process_stdout = stdout()
 		File ampseq_bbmerge_process_stderr = stderr()
 		File rawfastq_files = "Results/Fq_metadata/rawfilelist.tsv"
+		File merge_tar = "Merge.tar.gz"
 	}
 	runtime {
 		cpu: 1
