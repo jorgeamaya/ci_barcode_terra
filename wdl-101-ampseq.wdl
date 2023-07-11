@@ -196,8 +196,8 @@ task ampseq_bbmerge_process {
 	}
 }
 
-task adaptor_removal_step {
-	input {
-		File rawfilelist	
-	}
-}
+#task adaptor_removal_step {
+#	input {
+#		File rawfilelist	
+#	}
+#}
