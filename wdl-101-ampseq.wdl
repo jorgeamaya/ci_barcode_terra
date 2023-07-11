@@ -200,7 +200,7 @@ task ampseq_bbmerge_process {
 		File rawfastq_files = "Results/Fq_metadata/rawfilelist.tsv"
 		File merge_tar = "Merge.tar.gz"
 		File bbmergefields_table = "Report/Merge/bbmergefields.tsv"
-		File bbmerge_barplot = "Report/BBmerge_performance_absolute_report.pdf"
+		File bbmerge_barplot = "Report/BBmerge_performance_absolute_report.svg"
 	}
 	runtime {
 		cpu: 1
