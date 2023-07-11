@@ -173,14 +173,17 @@ task ampseq_bbmerge_process {
 		"amp_mask": amp_mask,
 		"verbose": verbose
 	}
+	File config_json = write_json(in_map)
 	command <<<
-	set -euxo pipefail
+	#set -euxo pipefail
+	set -x 
 	gsutil -m cp -r ~{path_to_fq} fq_dir/
-	python /Code/Amplicon_TerraPipeline.py --config ~{write_json(in_map)} --overlap_reads --meta --repo > stdout_string.txt
+	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo
+	echo $?
 	>>>
 	output {
-		File config_MiSeq = write_json(in_map)
-		File ampseq_bbmerge_process_stdout = "stdout_string.txt"
+		File config_MiSeq = config_json
+		File ampseq_bbmerge_process_stdout = stdout()
 	}
 	runtime {
 		cpu: 1
