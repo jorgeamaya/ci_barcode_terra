@@ -184,6 +184,7 @@ task ampseq_bbmerge_process {
 	output {
 		File config_MiSeq = config_json
 		File ampseq_bbmerge_process_stdout = stdout()
+		File rawfastq_files = "Results/Fq_metadata/rawfilelist.tsv"
 	}
 	runtime {
 		cpu: 1
