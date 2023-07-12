@@ -89,7 +89,9 @@ workflow amplicon_decontamination_detect {
 		File stdout_string = ampseq_bbmerge_process.ampseq_bbmerge_process_stdout
 		File merge_tar_file = ampseq_bbmerge_process.merge_tar
 		File bbmerge_report_file = ampseq_bbmerge_process.bbmergefields_table
-		File bbmerge_report_barplot = ampseq_bbmerge_process.bbmerge_barplot
+		File bbmerge_absolute_file = ampseq_bbmerge_process.bbmerge_absolute_barplot
+		File bbmerge_percentage_file = ampseq_bbmerge_process.bbmerge_percentage_barplot
+		File bbmerge_discarded_file = ampseq_bbmerge_process.bbmerge_discarded_barplot
 	}
 }
 
@@ -187,7 +189,7 @@ task ampseq_bbmerge_process {
 	gsutil -m cp -r ~{path_to_fq}* fq_dir/
 
 	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo --adaptor_removal --merge --bbmerge_report
-	Rscript /Code/BBMergeTerra.R Report/Merge/ Report/
+	Rscript /Code/BBMerge.R Report/Merge/ Report/
 	tar -czvf Merge.tar.gz Results/Merge
 	find . -type f
 	cat Results/stdout.txt
@@ -200,7 +202,9 @@ task ampseq_bbmerge_process {
 		File rawfastq_files = "Results/Fq_metadata/rawfilelist.tsv"
 		File merge_tar = "Merge.tar.gz"
 		File bbmergefields_table = "Report/Merge/bbmergefields.tsv"
-		File bbmerge_barplot = "Report/BBmerge_performance_absolute_report.svg"
+		File bbmerge_absolute_barplot = "Report/BBmerge_performance_absolute_report.svg"
+		File bbmerge_percentage_barplot = "Report/BBmerge_performance_percentage_report.svg"
+		File bbmerge_discarded_barplot = "Report/BBmerge_performace_absolute_discarded.svg"	
 	}
 	runtime {
 		cpu: 1
