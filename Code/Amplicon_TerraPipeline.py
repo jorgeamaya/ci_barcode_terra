@@ -132,8 +132,8 @@ def main():
 		p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
-			#p.apply_async(ad.adaptor_rem, args=(slist[0], slist[1], slist[2], res_dir, "AdaptorRem"))
-			ad.adaptor_rem(slist[0], slist[1], slist[2], res_dir, "AdaptorRem")
+			p.apply_async(ad.adaptor_rem, args=(slist[0], slist[1], slist[2], res_dir, "AdaptorRem"))
+			#ad.adaptor_rem(slist[0], slist[1], slist[2], res_dir, "AdaptorRem")
 		p.close()
 		p.join()
 
@@ -149,8 +149,8 @@ def main():
 		p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
-			#p.apply_async(ad.mergereads, args=(slist[0], slist[1], slist[2], res_dir, "Merge", read_maxlength, pairread_minlength, merge_minlength))
-			ad.mergereads(slist[0], slist[1], slist[2], res_dir, "Merge", read_maxlength, pairread_minlength, merge_minlength)
+			p.apply_async(ad.mergereads, args=(slist[0], slist[1], slist[2], res_dir, "Merge", read_maxlength, pairread_minlength, merge_minlength))
+			#ad.mergereads(slist[0], slist[1], slist[2], res_dir, "Merge", read_maxlength, pairread_minlength, merge_minlength)
 		p.close()
 		p.join()
 
@@ -169,8 +169,8 @@ def main():
 		p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
-			#p.apply_async(ad.mergereads, args=(slist[0], slist[3], res_dir, rep_dir, "Merge"))
-			ad.extract_bbmergefields(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge")
+			p.apply_async(ad.mergereads, args=(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge"))
+			#ad.extract_bbmergefields(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge")
 		p.close()
 		p.join()
 
