@@ -14,14 +14,6 @@ if (!require("viridis")) {
 
 mergedata <- read.csv(file.path(data_dir, "bbmergefields.tsv"), sep = "\t", header = TRUE)
 
-#svg(file.path(out_dir, "BBmerge_performance_absolute_report.svg"), width = 12)
-#barplot(mergedata[c(1:20),2] ~ mergedata[c(1:20),1], las = 2, cex.names = 1)
-#dev.off()
-
-#Subset the table to the desired experiments
-#samples_order = read.csv(file.path(dirname(dirname(data_dir)), "Data", "present.csv"), sep = ",", header = FALSE)$V1
-#mergedata = mergedata[mergedata$SampleID %in% samples_order,] 
-
 mergedata_join = subset(mergedata, select = c(3, 5, 7))
 rownames(mergedata_join) = mergedata$SampleID
 color_vector = viridis(nrow(t(as.matrix(mergedata_join))), option = "D")
