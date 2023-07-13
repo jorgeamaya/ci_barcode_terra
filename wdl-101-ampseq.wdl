@@ -195,7 +195,7 @@ task ampseq_bbmerge_process {
 	gsutil ls ~{path_to_fq}
 	gsutil -m cp -r ~{path_to_fq}* fq_dir/
 
-	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo --adaptor_removal --merge --bbmerge_report
+	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo #--adaptor_removal --merge --bbmerge_report
 	Rscript /Code/BBMerge.R Report/Merge/ Report/
 	tar -czvf Merge.tar.gz Results/Merge
 	find . -type f
