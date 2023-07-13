@@ -113,8 +113,8 @@ def main():
 	### EXEC
 
 	#Set stdout and stderr for performance report
-#	sys.stdout = open((res_dir + "/stdout.txt"),"a")
-#	sys.stderr = open((res_dir + "/stderr.txt"),"a")
+	sys.stdout = open((res_dir + "/stdout.txt"),"a")
+	sys.stderr = open((res_dir + "/stderr.txt"),"a")
 
 	#Create metadata files
 	if args.meta:
@@ -129,13 +129,13 @@ def main():
 		
 		meta = open(os.path.join(res_dir, "Fq_metadata", "rawfilelist.tsv"), 'r')
 		samples = meta.readlines()
-		p = multiprocessing.Pool()
+#		p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
-			p.apply_async(ad.adaptor_rem, args=(slist[0], slist[1], slist[2], res_dir, "AdaptorRem"))
-			#ad.adaptor_rem(slist[0], slist[1], slist[2], res_dir, "AdaptorRem")
-		p.close()
-		p.join()
+#			p.apply_async(ad.adaptor_rem, args=(slist[0], slist[1], slist[2], res_dir, "AdaptorRem"))
+			ad.adaptor_rem(slist[0], slist[1], slist[2], res_dir, "AdaptorRem")
+#		p.close()
+#		p.join()
 
 		ad.create_meta(os.path.join(res_dir, "AdaptorRem"), res_dir, "AdaptorRem", "adaptorrem_meta.tsv",
 			pattern_fw="*_val_1.fq.gz", pattern_rv="*_val_2.fq.gz")
@@ -166,13 +166,13 @@ def main():
 
 		meta = open(os.path.join(res_dir, "Merge", "merge_meta.tsv"), 'r')
 		samples = meta.readlines()
-		p = multiprocessing.Pool()
+#		p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
-			p.apply_async(ad.mergereads, args=(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge"))
-			#ad.extract_bbmergefields(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge")
-		p.close()
-		p.join()
+			#p.apply_async(ad.mergereads, args=(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge"))
+			ad.extract_bbmergefields(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge")
+#		p.close()
+#		p.join()
 
 	#Remove primers in standard procedure
 	if args.primer_removal and args.overlap_reads:
