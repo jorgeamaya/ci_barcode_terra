@@ -207,7 +207,7 @@ task ampseq_bbmerge_process {
 		#File bbmerge_discarded_barplot = "Report/BBmerge_performace_absolute_discarded.svg"	
 	}
 	runtime {
-		cpu_cores: 1
+		cpu: 4
 		memory: "1 GiB"
 		disks: "local-disk 10 HDD"
 		bootDiskSizeGb: 10

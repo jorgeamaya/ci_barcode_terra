@@ -146,13 +146,13 @@ def main():
 		
 		meta = open(os.path.join(res_dir, "AdaptorRem", "adaptorrem_meta.tsv") , 'r')
 		samples = meta.readlines()
-		p = multiprocessing.Pool()
+		#p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
-			p.apply_async(ad.mergereads, args=(slist[0], slist[1], slist[2], res_dir, "Merge", read_maxlength, pairread_minlength, merge_minlength))
-			#ad.mergereads(slist[0], slist[1], slist[2], res_dir, "Merge", read_maxlength, pairread_minlength, merge_minlength)
-		p.close()
-		p.join()
+			#p.apply_async(ad.mergereads, args=(slist[0], slist[1], slist[2], res_dir, "Merge", read_maxlength, pairread_minlength, merge_minlength))
+			ad.mergereads(slist[0], slist[1], slist[2], res_dir, "Merge", read_maxlength, pairread_minlength, merge_minlength)
+		#p.close()
+		#p.join()
 
 	#Process merge report and generate RStudio plots
 	if args.bbmerge_report and args.overlap_reads:
