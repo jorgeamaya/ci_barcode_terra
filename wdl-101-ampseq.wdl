@@ -3,6 +3,7 @@ version 1.0
 workflow amplicon_decontamination_detect {
 	input {
 		String path_to_fq 
+		String path_to_flist
 		String pattern_fw = "*_L001_R1_001.fastq.gz"
 		String pattern_rv = "*_L001_R2_001.fastq.gz"
 		Int read_maxlength = 200
@@ -45,6 +46,7 @@ workflow amplicon_decontamination_detect {
 	call ampseq_bbmerge_process {
 		input:
 			path_to_fq = path_to_fq,
+			path_to_flist = path_to_flist,
 			pattern_fw = pattern_fw,
 			pattern_rv = pattern_rv,
 			read_maxlength = read_maxlength,
@@ -86,18 +88,22 @@ workflow amplicon_decontamination_detect {
 	}
 
 	output {
-		File stdout_string = ampseq_bbmerge_process.ampseq_bbmerge_process_stdout
-		File merge_tar_file = ampseq_bbmerge_process.merge_tar
-		File bbmerge_report_file = ampseq_bbmerge_process.bbmergefields_table
-		File bbmerge_absolute_file = ampseq_bbmerge_process.bbmerge_absolute_barplot
-		File bbmerge_percentage_file = ampseq_bbmerge_process.bbmerge_percentage_barplot
-		File bbmerge_discarded_file = ampseq_bbmerge_process.bbmerge_discarded_barplot
+		File rawfilelist_f = ampseq_bbmerge_process.rawfilelist
+		File missing_files_f = ampseq_bbmerge_process.missing_files
+		File merge_tar_f = ampseq_bbmerge_process.merge_tar
+		File bbmergefields_f = ampseq_bbmerge_process.bbmergefields
+		File BBmerge_performance_absolute_report_f = ampseq_bbmerge_process.BBmerge_performance_absolute_report
+		File BBmerge_performance_percentage_report_f = ampseq_bbmerge_process.BBmerge_performance_percentage_report
+		File BBmerge_performace_absolute_discarded_f = ampseq_bbmerge_process.BBmerge_performace_absolute_discarded
+		#?REMOVE
+		#File stdout_string = ampseq_bbmerge_process.ampseq_bbmerge_process_stdout
 	}
 }
 
 task ampseq_bbmerge_process {
 	input {
 		String path_to_fq 
+		String path_to_flist
 		String pattern_fw = "*_L001_R1_001.fastq.gz"
 		String pattern_rv = "*_L001_R2_001.fastq.gz"
 		Int read_maxlength = 200
@@ -140,6 +146,7 @@ task ampseq_bbmerge_process {
 
 	Map[String, String] in_map = {
 		"path_to_fq": "fq_dir",
+		"path_to_flist": path_to_flist,
 		"pattern_fw": pattern_fw,
 		"pattern_rv": pattern_rv,
 		"read_maxlength": read_maxlength,
@@ -196,15 +203,19 @@ task ampseq_bbmerge_process {
 	cat Results/stderr.txt
 	>>>
 	output {
-		File config_MiSeq = config_json
-		File ampseq_bbmerge_process_stdout = stdout()
-		File ampseq_bbmerge_process_stderr = stderr()
-		File rawfastq_files = "Results/Fq_metadata/rawfilelist.tsv"
+		File rawfilelist = "Results/Fq_metadata/rawfilelist.tsv"
+		File missing_files = "Results/Fq_metadata/missing_files.tsv" 
 		File merge_tar = "Merge.tar.gz"
-		File bbmergefields_table = "Report/Merge/bbmergefields.tsv"
-		File bbmerge_absolute_barplot = "Report/BBmerge_performance_absolute_report.svg"
-		File bbmerge_percentage_barplot = "Report/BBmerge_performance_percentage_report.svg"
-		File bbmerge_discarded_barplot = "Report/BBmerge_performace_absolute_discarded.svg"	
+		File bbmergefields = "Report/Merge/bbmergefields.tsv"
+		File BBmerge_performance_absolute_report = "Report/BBmerge_performance_absolute_report.svg"
+		File BBmerge_performance_percentage_report = "Report/BBmerge_performance_percentage_report.svg"
+		File BBmerge_performace_absolute_discarded = "Report/BBmerge_performace_absolute_discarded.svg"	
+
+		#?REMOVE
+		#File config_MiSeq = config_json
+		#File ampseq_bbmerge_process_stdout = stdout()
+		#File ampseq_bbmerge_process_stderr = stderr()
+
 	}
 	runtime {
 		cpu: 1

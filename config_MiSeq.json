@@ -1,6 +1,6 @@
 {
-	"##_COMMENT_##": "INPUTS",
-	"path_to_fq": "Docker_Container/path/to/fastqs",
+	"path_to_fq": "/Users/jorgeamaya/Desktop/Broad_Test/Data_Repo_MiSeq2_10c",
+	"path_to_flist": "Data/all_samples_Data_Repo_MiSeq2_10c_complete.tsv",
 	"pattern_fw": "*_L001_R1_001.fastq.gz",
 	"pattern_rv": "*_L001_R2_001.fastq.gz",
 	"read_maxlength": 200,

@@ -71,6 +71,7 @@ def main():
 	with open(args.config, 'r') as config_file:
 		config_inputs = json.load(config_file)
 		path_to_fq = config_inputs['path_to_fq']
+		path_to_flist = config_inputs['path_to_flist']
 		pattern_fw = config_inputs['pattern_fw']
 		pattern_rv = config_inputs['pattern_rv']
 		read_maxlength = config_inputs['read_maxlength']
@@ -116,14 +117,23 @@ def main():
 	sys.stdout = open((res_dir + "/stdout.txt"),"a")
 	sys.stderr = open((res_dir + "/stderr.txt"),"a")
 
-	#Create metadata files
+	#Create metadata files and a list of missing files
 	if args.meta:
 		ad.flush_dir(res_dir, "Fq_metadata")
 		ad.create_meta(path_to_fq, res_dir, "Fq_metadata", "rawfilelist.tsv", 
 		pattern_fw, pattern_rv)
 
-	
+		#List missing file from the complete list of files
+		with open(path_to_flist, 'r') as input_file:
+			samples = [line.strip() for line in input_file]
 
+		with open('Results/Fq_metadata/rawfilelist.tsv', 'r') as raw_files:
+			raw_file_samples = [line.split('\t')[0] for line in raw_files]
+
+		missing_samples = [sample for sample in samples if sample not in raw_file_samples]
+
+		with open('Results/missing_files.tsv', 'w') as output_file:
+			output_file.write('\n'.join(missing_samples))
 
 	#Remove adaptors
 	#Most sequences must be adaptor free; just in case, run this step to eliminate any lingering adaptors.
