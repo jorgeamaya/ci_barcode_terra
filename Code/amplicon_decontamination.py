@@ -115,8 +115,8 @@ def mergereads(sampleid, fileF, fileR, res_dir, subdir, read_maxlength=200, pair
 		output_unmerged_r_path = os.path.join(res_dir, subdir, f"{sampleid}_unmergedr.fastq")
 		meta_file_path = os.path.join(res_dir, subdir, f"merge_meta.tsv")
 
-		sys.stdout = open(file_nameout, "w")
-		sys.stderr = open(file_nameerr, "w")
+		#sys.stdout = open(file_nameout, "w")
+		#sys.stderr = open(file_nameerr, "w")
 
 		with open(meta_file_path, "a") as meta_file:
 			meta_file.write(f"{sampleid}\t{output_file_path}\t{file_nameout}\t{file_nameerr}\n")
@@ -132,11 +132,12 @@ def mergereads(sampleid, fileF, fileR, res_dir, subdir, read_maxlength=200, pair
 			f'out={output_file_path}',
 			f'outu1={output_unmerged_f_path}', 
 			f'outu2={output_unmerged_r_path}']
-		proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+		#proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+		proc = subprocess.Popen(cmd)#, stdout=sys.stdout, stderr=sys.stderr)
 		proc.wait()
 
-		sys.stdout = open(os.path.join(res_dir, 'stdout.txt'), 'a')
-		sys.stderr = open(os.path.join(res_dir, 'stderr.txt'), 'a')
+		#sys.stdout = open(os.path.join(res_dir, 'stdout.txt'), 'a')
+		#sys.stderr = open(os.path.join(res_dir, 'stderr.txt'), 'a')
 
 	else:
 		sys.exit('Pre-process halted : one or both of the fastq files not found! Exiting..')
@@ -163,8 +164,8 @@ def extract_bbmergefields(sampleid, mergefile, bbreportfile, res_dir, rep_dir, s
 	"""
 
 	if os.path.isfile(bbreportfile) and os.path.isfile(mergefile):				
-		sys.stdout = open(os.path.join(rep_dir, 'stdout.txt'), 'a')
-		sys.stderr = open(os.path.join(rep_dir, 'stderr.txt'), 'a')
+		#sys.stdout = open(os.path.join(rep_dir, 'stdout.txt'), 'a')
+		#sys.stderr = open(os.path.join(rep_dir, 'stderr.txt'), 'a')
 		bbmergedata = {}
 		bbmergedata['sampleid'] = sampleid
 
@@ -214,11 +215,12 @@ def extract_bbmergefields(sampleid, mergefile, bbreportfile, res_dir, rep_dir, s
 		'-d', os.path.join(rep_dir, subdir)]
 
 		print(cmd)
-		proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+		#proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+		proc = subprocess.Popen(cmd)#, stdout=sys.stdout, stderr=sys.stderr)
 		proc.wait()
 
-		sys.stdout = open(os.path.join(res_dir, 'stdout.txt'), 'a')
-		sys.stderr = open(os.path.join(res_dir, 'stderr.txt'), 'a')
+		#sys.stdout = open(os.path.join(res_dir, 'stdout.txt'), 'a')
+		#sys.stderr = open(os.path.join(res_dir, 'stderr.txt'), 'a')
 	else:
 		sys.exit('Extract bbmerge report halted : bbmerge report file not found! Exiting..')
 	return()
@@ -244,18 +246,19 @@ def adaptor_rem(sampleid, fileF, fileR, res_dir, subdir, qvalue = 5, length = 20
 	if os.path.isfile(fileF) and os.path.isfile(fileR):
 		file_nameout = os.path.join(res_dir, subdir, f"{sampleid}_stdout.txt")
 		file_nameerr = os.path.join(res_dir, subdir, f"{sampleid}_stderr.txt")
-		sys.stdout = open(file_nameout, "w")
-		sys.stderr = open(file_nameerr, "w")
+		#sys.stdout = open(file_nameout, "w")
+		#sys.stderr = open(file_nameerr, "w")
 
 		output_dir = os.path.join(res_dir, subdir)
 		cmd = ['trim_galore', '--paired', '--gzip', '--quality', f'{qvalue}', '--length', 
 		f'{length}', '--output_dir', f'{output_dir}', '--basename', f'{sampleid}', f'{fileF}', 
 		f'{fileR}']
-		proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+		#proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+		proc = subprocess.Popen(cmd)#, stdout=sys.stdout, stderr=sys.stderr)
 		proc.wait()
 
-		sys.stdout = open(os.path.join(res_dir, 'stdout.txt'), 'a')
-		sys.stderr = open(os.path.join(res_dir, 'stderr.txt'), 'a')
+		#sys.stdout = open(os.path.join(res_dir, 'stdout.txt'), 'a')
+		#sys.stderr = open(os.path.join(res_dir, 'stderr.txt'), 'a')
 	else:
 		sys.exit('Adaptor Removal halted : one or both of the fastq files not found! Exiting..')
 	return()
