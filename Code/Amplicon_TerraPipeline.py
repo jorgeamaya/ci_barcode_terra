@@ -122,6 +122,9 @@ def main():
 		ad.create_meta(path_to_fq, res_dir, "Fq_metadata", "rawfilelist.tsv", 
 		pattern_fw, pattern_rv)
 
+	
+
+
 	#Remove adaptors
 	#Most sequences must be adaptor free; just in case, run this step to eliminate any lingering adaptors.
 	if args.adaptor_removal:
