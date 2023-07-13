@@ -188,8 +188,8 @@ task ampseq_bbmerge_process {
 	}
 	File config_json = write_json(in_map)
 	command <<<
-	#set -euxo pipefail
-	set -x
+	set -euxo pipefail
+	#set -x
 	mkdir fq_dir
 
 	gsutil ls ~{path_to_fq}
