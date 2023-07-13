@@ -199,8 +199,8 @@ task ampseq_bbmerge_process {
 	#Rscript /Code/BBMerge.R Report/Merge/ Report/
 	#tar -czvf Merge.tar.gz Results/Merge
 	find . -type f
-	cat Results/stdout.txt
-	cat Results/stderr.txt
+	#cat Results/stdout.txt
+	#cat Results/stderr.txt
 	>>>
 	output {
 		File rawfilelist = "Results/Fq_metadata/rawfilelist.tsv"
