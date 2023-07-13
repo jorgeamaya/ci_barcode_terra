@@ -3,7 +3,7 @@ version 1.0
 workflow amplicon_decontamination_detect {
 	input {
 		String path_to_fq 
-		String path_to_flist
+		File path_to_flist
 		String pattern_fw = "*_L001_R1_001.fastq.gz"
 		String pattern_rv = "*_L001_R2_001.fastq.gz"
 		Int read_maxlength = 200
@@ -103,7 +103,7 @@ workflow amplicon_decontamination_detect {
 task ampseq_bbmerge_process {
 	input {
 		String path_to_fq 
-		String path_to_flist
+		File path_to_flist
 		String pattern_fw = "*_L001_R1_001.fastq.gz"
 		String pattern_rv = "*_L001_R2_001.fastq.gz"
 		Int read_maxlength = 200
