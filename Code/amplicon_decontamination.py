@@ -140,7 +140,7 @@ def mergereads(sampleid, fileF, fileR, res_dir, subdir, read_maxlength=200, pair
 		#sys.stderr = open(os.path.join(res_dir, 'stderr.txt'), 'a')
 
 	else:
-		sys.exit('Pre-process halted : one or both of the fastq files not found! Exiting..')
+		sys.exit('BBmerge halted : one or both of the fastq files not found! Exiting..')
 	return()
 
 def extract_bbmergefields(sampleid, mergefile, bbreportfile, res_dir, rep_dir, subdir):
