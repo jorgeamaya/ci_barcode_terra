@@ -146,7 +146,7 @@ task ampseq_bbmerge_process {
 
 	Map[String, String] in_map = {
 		"path_to_fq": "fq_dir",
-		"path_to_flist": sub(path_to_flist, "gs://", "/cromwell_root/")
+		"path_to_flist": sub(path_to_flist, "gs://", "/cromwell_root/"),
 		"pattern_fw": pattern_fw,
 		"pattern_rv": pattern_rv,
 		"read_maxlength": read_maxlength,
