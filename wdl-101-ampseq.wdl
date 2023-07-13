@@ -213,6 +213,6 @@ task ampseq_bbmerge_process {
 		bootDiskSizeGb: 10
 		preemptible: 3
 		maxRetries: 1
-		docker: 'jorgeamaya/ci_barcode_terra:839934b385843ad09d02d7cd3bc18da9f5efc2cd763f54fa1da57efcf282f33c'
+		docker: 'jorgeamaya/ci_barcode_terra:839934b38584'
 	}
 }
