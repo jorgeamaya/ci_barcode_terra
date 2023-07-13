@@ -204,7 +204,7 @@ task ampseq_bbmerge_process {
 	>>>
 	output {
 		File rawfilelist = "Results/Fq_metadata/rawfilelist.tsv"
-		File missing_files = "Results/Fq_metadata/missing_files.tsv" 
+		File missing_files = "Results/missing_files.tsv" 
 #		File merge_tar = "Merge.tar.gz"
 #		File bbmergefields = "Report/Merge/bbmergefields.tsv"
 #		File BBmerge_performance_absolute_report = "Report/BBmerge_performance_absolute_report.svg"
