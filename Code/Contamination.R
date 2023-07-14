@@ -61,6 +61,7 @@ file_list = file_list[file_list != "bbmergefields.tsv"]
 if(basename(data_dir) == 'Merge'){
   for (file in file_list) {
     file_path = paste0(path = data_dir, file) # current directory assumed
+    print(file_path)
     if (file.info(file_path)$size == 1) {
       next
     }
