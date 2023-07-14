@@ -203,6 +203,8 @@ task ampseq_bbmerge_process {
 
 	python /Code/Amplicon_TerraPipeline.py --config ~{config_json} --overlap_reads --meta --repo --adaptor_removal --merge --bbmerge_report
 	Rscript /Code/BBMerge.R Report/Merge/ Report/
+	
+	gsutil ls Report/Merge/
 	Rscript /Code/Contamination.R Report/Merge/ Report/ ~{path_to_flist}
 	tar -czvf Merge.tar.gz Results/Merge
 	find . -type f
