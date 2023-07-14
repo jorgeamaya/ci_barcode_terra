@@ -58,9 +58,17 @@ file_list = file_list[file_list != "bbmergefields.tsv"]
 # This has to be done differently depending on whether the contamination
 # report is being written from BBMerge or DADA2
 
+print("Minor checks")
+print("basename(data_dir)")
+print(basename(data_dir))
+print("file_list")
+print(file_list)
+
+
 if(basename(data_dir) == 'Merge'){
   for (file in file_list) {
     file_path = paste0(path = data_dir, file) # current directory assumed
+    print("file_path")
     print(file_path)
     if (file.info(file_path)$size == 1) {
       next
