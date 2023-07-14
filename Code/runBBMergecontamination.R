@@ -18,11 +18,13 @@ if (!require("stringdist")) {
 parser <- ArgumentParser()
 parser$add_argument("-p", "--path_to_fastq", help="Path to merged fastq file (required)")
 parser$add_argument("-d", "--dir", help="Working directory path for writing all bbmerge contamination output files")
+parser$add_argument("-b", "--barcodes", help="The path to a csv file with the sample_id,Forward,Reverse, where Forward and Reverse are columns with the barcodes for the sample")
 args <- parser$parse_args()
 
 # Universal parameters
 fastq_file <- args$path_to_fastq
 work_dir <- args$dir
+path_to_flist <- args$barcodes
 
 print(paste0("Processing file: ", fastq_file))
 write(paste0("Processing file: ", fastq_file), stderr())
@@ -31,7 +33,7 @@ write(paste0("Processing file: ", fastq_file), stderr())
 ########################################
 
 source(paste0(file.path(dirname(dirname(work_dir)), "Code", "matching_functions.R")))
-barcodes = read.csv(file.path(dirname(dirname(work_dir)), "Data", 'barcodes_matches.csv'), sep = ",", header = TRUE)
+barcodes = read.csv(path_to_flist, sep = ",", header = TRUE)
 dist = 2
 
 # Open the Fastq file

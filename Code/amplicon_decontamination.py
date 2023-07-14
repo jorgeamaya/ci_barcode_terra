@@ -133,7 +133,6 @@ def mergereads(sampleid, fileF, fileR, res_dir, subdir, read_maxlength=200, pair
 			f'outu1={output_unmerged_f_path}', 
 			f'outu2={output_unmerged_r_path}']
 		proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
-		#proc = subprocess.Popen(cmd)#, stdout=sys.stdout, stderr=sys.stderr)
 		proc.wait()
 
 		sys.stdout = open(os.path.join(res_dir, 'stdout.txt'), 'a')
@@ -143,7 +142,7 @@ def mergereads(sampleid, fileF, fileR, res_dir, subdir, read_maxlength=200, pair
 		sys.exit('BBmerge halted : one or both of the fastq files not found! Exiting..')
 	return()
 
-def extract_bbmergefields(sampleid, mergefile, bbreportfile, res_dir, rep_dir, subdir):
+def extract_bbmergefields(sampleid, mergefile, bbreportfile, path_to_flist, res_dir, rep_dir, subdir):
 	"""
 	Extracts relevant data from a bbmerge report file and saves it to a tab-separated file.
 
@@ -151,6 +150,7 @@ def extract_bbmergefields(sampleid, mergefile, bbreportfile, res_dir, rep_dir, s
 	sampleid: the ID of the sample being processed
 	mergefile: the path to the file with the merged reads
 	bbreportfile: the path to the bbmerge report file
+	path_to_flist: the path to a csv file with the sample_id,Forward,Reverse, where Forward and Reverse are columns with the barcodes for the sample
 	res_dir: the path to the main results directory
 	rep_dir: the path to the reports directory within the results directory
 	subdir: the name of the subdirectory within the results directory where output files should be written
@@ -160,7 +160,7 @@ def extract_bbmergefields(sampleid, mergefile, bbreportfile, res_dir, rep_dir, s
 
 	Example Usage:
 
-	extract_bbmergefields("Sample1", "/path/to/bbmerge.fastq", "/path/to/bbmerge_report.txt", "/path/to/results", "/path/to/reports", "bbmerge")
+	extract_bbmergefields("Sample1", "/path/to/bbmerge.fastq", "/path/to/bbmerge_report.txt", "path/to/barcodes_match.csv", "/path/to/results", "/path/to/reports", "bbmerge")
 	"""
 
 	if os.path.isfile(bbreportfile) and os.path.isfile(mergefile):				
@@ -212,11 +212,11 @@ def extract_bbmergefields(sampleid, mergefile, bbreportfile, res_dir, rep_dir, s
 
 		cmd = ['Rscript', os.path.join('Code/runBBMergecontamination.R'),
 		'-p', f'{mergefile}',
-		'-d', os.path.join(rep_dir, subdir)]
+		'-d', os.path.join(rep_dir, subdir),
+		'-b', path_to_flist]
 
 		print(cmd)
 		proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
-		#proc = subprocess.Popen(cmd)#, stdout=sys.stdout, stderr=sys.stderr)
 		proc.wait()
 
 		sys.stdout = open(os.path.join(res_dir, 'stdout.txt'), 'a')

@@ -3,7 +3,12 @@
 args = commandArgs(trailingOnly=TRUE)
 data_dir = args[1]
 out_dir = args[2]
-exp_dir = args[3]
+#exp_dir = args[3]
+path_to_flist = args[3]
+
+#data_dir = "/Users/jorgeamaya/Desktop/ci_barcode_terra/Report/Merge/" 
+#out_dir = "/Users/jorgeamaya/Desktop/ci_barcode_terra/Report/"
+#path_to_flist = "/Users/jorgeamaya/Desktop/ci_barcode_terra/Data/barcodes_matches.csv"
 
 #data_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Report/DADA2_Contamination/'
 #data_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Report/Merge/'
@@ -82,9 +87,15 @@ if(basename(data_dir) == 'Merge'){
 }
 
 # Load the experiment list from a one column csv file
-samples_order = read.csv(file.path(exp_dir, "experiments10c.csv"), sep = ",", header = FALSE)$V1
-barcodes = read.csv(file.path(exp_dir, "barcodes_fw.csv"), sep = ",", header = FALSE)$V1
-revbarcodes = read.csv(file.path(exp_dir, "barcodes_rv.csv"), sep = ",", header = FALSE)$V1
+#samples_order = read.csv(file.path(exp_dir, "experiments10c.csv"), sep = ",", header = FALSE)$V1
+#fwbarcodes = read.csv(file.path(exp_dir, "barcodes_fw.csv"), sep = ",", header = FALSE)$V1
+#revbarcodes = read.csv(file.path(exp_dir, "barcodes_rv.csv"), sep = ",", header = FALSE)$V1
+
+barcodes_list = read.csv(path_to_flist, sep = ",", header = TRUE)
+samples_order = as.character(barcodes_list$sample_id)
+str(samples_order)
+fwbarcodes = unique(barcodes_list$Forward)
+revbarcodes = unique(barcodes_list$Reverse)
 
 #Handle empty dada2 file
 #if(basename(data_dir) == 'DADA2_Contamination'){
@@ -146,11 +157,11 @@ plotper = ggplot(m_sample_status_p_melted, aes(match_status, sample_id)) +
         legend.key.width= unit(0.5, 'in'),
         axis.text.x = element_text(angle = 45, hjust=1)) 
 
-pdf(file.path(out_dir, "Match_report_abs.pdf"), width = 11, height = 20)
+svg(file.path(out_dir, "Match_report_abs.svg"), width = 11, height = 20)
 print(plotabs)
 dev.off()
 
-pdf(file.path(out_dir, "Match_report_per.pdf"), width = 11, height = 20)
+svg(file.path(out_dir, "Match_report_per.svg"), width = 11, height = 20)
 print(plotper)
 dev.off()
 
@@ -164,13 +175,13 @@ m_sample_status_p = round(m_sample_status/rowSums(m_sample_status), 2)
 m_sample_status_p_melted = melt(m_sample_status_p, id.vars=c("forward_barcodes", "reverse_barcodes"))
 
 m_sample_status_melted$forward_barcode = factor(m_sample_status_melted$forward_barcode,
-                                                levels = barcodes)
+                                                levels = fwbarcodes)
 
 m_sample_status_melted$reverse_barcode = factor(m_sample_status_melted$reverse_barcode,
                                                 levels = rev(revbarcodes))
 
 m_sample_status_p_melted$forward_barcode = factor(m_sample_status_p_melted$forward_barcode,
-                                                levels = barcodes)
+                                                levels = fwbarcodes)
 
 m_sample_status_p_melted$reverse_barcode = factor(m_sample_status_p_melted$reverse_barcode,
                                                 levels = rev(revbarcodes))
@@ -193,11 +204,11 @@ plotper = ggplot(m_sample_status_p_melted, aes(forward_barcode, reverse_barcode)
   theme(legend.position="top",
         legend.key.width= unit(0.5, 'in')) 
 
-pdf(file.path(out_dir, "Barcode_report_abs.pdf"), width = 18, height = 18)
+svg(file.path(out_dir, "Barcode_report_abs.svg"), width = 18, height = 18)
 print(plotabs)
 dev.off()
 
-pdf(file.path(out_dir, "Barcode_report_per.pdf"), width = 18, height = 18)
+svg(file.path(out_dir, "Barcode_report_per.svg"), width = 18, height = 18)
 print(plotper)
 dev.off()
 
@@ -232,7 +243,7 @@ m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[, c("forwa
 
 colnames(m_sample_status_p_melted_reshaped) = c("Forward Barcode", "0", "1", "2")
 
-forward_order = barcodes[-which(barcodes == 'NULL')]
+forward_order = fwbarcodes[-which(fwbarcodes == 'NULL')]
 m_sample_status_p_melted_reshaped = m_sample_status_p_melted_reshaped[match(forward_order, m_sample_status_p_melted_reshaped[,1]),]
 
 write.table(m_sample_status_p_melted_reshaped, 
@@ -302,7 +313,7 @@ dev.off()
 ###################################
 #DISAGGREGATED REPORT
 
-barcodes = read.csv(file.path(dirname(dirname(data_dir)), "Data", 'barcodes_matches.csv'), sep = ",", header = TRUE)
+#barcodes = read.csv(file.path(dirname(dirname(data_dir)), "Data", 'barcodes_matches.csv'), sep = ",", header = TRUE)
 contamination_threshold = 0.5
 
 if(basename(data_dir) == 'Merge'){
@@ -327,7 +338,7 @@ if(basename(data_dir) == 'Merge'){
   #Adjust table to include samples with no reads
   rows = rownames(m_sample_status_p_melted_reshaped) 
   no_mergers = samples_order[!rows %in% samples_order]
-  rows[which(rows == 'NA')] = no_mergers  
+  rows[grep('^NA', rows)] = no_mergers
   rownames(m_sample_status_p_melted_reshaped) = rows
   
   #Fill the threshold and wrong barcode combinations flags
@@ -341,7 +352,7 @@ if(basename(data_dir) == 'Merge'){
                                               !colnames(m_sample_status_p_melted_reshaped) %in% c("sample_id", "Productivity_Flag", "Well_Productivity")]
       abs_values <- sapply(tmp, function(x) abs(x))
       column_with_max_abs <- names(tmp)[which.max(abs_values)]
-      max_freq_barcodes = unlist(barcodes[barcodes$sample_id == sample, c("Forward", "Reverse")])
+      max_freq_barcodes = unlist(barcodes_list[barcodes_list$sample_id == sample, c("Forward", "Reverse")])
       names(max_freq_barcodes) = NULL
       
       below_thres = tmp[which.max(abs_values)] < 0.5
@@ -407,7 +418,7 @@ if(basename(data_dir) == 'Merge'){
                                               !colnames(m_sample_status_p_melted_reshaped) %in% c("sample_id", "Productivity_Flag", "Well_Productivity")]
       abs_values <- sapply(tmp, function(x) abs(x))
       column_with_max_abs <- names(tmp)[which.max(abs_values)]
-      max_freq_barcodes = unlist(barcodes[barcodes$sample_id == sample, c("Forward", "Reverse")])
+      max_freq_barcodes = unlist(barcodes_list[barcodes_list$sample_id == sample, c("Forward", "Reverse")])
       names(max_freq_barcodes) = NULL
       
       below_thres = tmp[which.max(abs_values)] < 0.5
@@ -436,3 +447,4 @@ if(basename(data_dir) == 'Merge'){
               row.names = TRUE,
               col.names = TRUE)
 }
+

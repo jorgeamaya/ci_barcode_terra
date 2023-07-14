@@ -114,8 +114,8 @@ def main():
 	### EXEC
 
 	#Set stdout and stderr for performance report
-	#sys.stdout = open((res_dir + "/stdout.txt"),"a")
-	#sys.stderr = open((res_dir + "/stderr.txt"),"a")
+	sys.stdout = open((res_dir + "/stdout.txt"),"a")
+	sys.stderr = open((res_dir + "/stderr.txt"),"a")
 
 	#Create metadata files and a list of missing files
 	if args.meta:
@@ -125,7 +125,8 @@ def main():
 
 		#List missing file from the complete list of files
 		with open(path_to_flist, 'r') as input_file:
-			samples = [line.strip() for line in input_file]
+			next(input_file)
+			samples = [line.split(',')[0] for line in input_file]
 
 		with open('Results/Fq_metadata/rawfilelist.tsv', 'r') as raw_files:
 			raw_file_samples = [line.split('\t')[0] for line in raw_files]
@@ -142,13 +143,13 @@ def main():
 		
 		meta = open(os.path.join(res_dir, "Fq_metadata", "rawfilelist.tsv"), 'r')
 		samples = meta.readlines()
-#		p = multiprocessing.Pool()
+		#p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
-#			p.apply_async(ad.adaptor_rem, args=(slist[0], slist[1], slist[2], res_dir, "AdaptorRem"))
+			#p.apply_async(ad.adaptor_rem, args=(slist[0], slist[1], slist[2], res_dir, "AdaptorRem"))
 			ad.adaptor_rem(slist[0], slist[1], slist[2], res_dir, "AdaptorRem")
-#		p.close()
-#		p.join()
+		#p.close()
+		#p.join()
 
 		ad.create_meta(os.path.join(res_dir, "AdaptorRem"), res_dir, "AdaptorRem", "adaptorrem_meta.tsv",
 			pattern_fw="*_val_1.fq.gz", pattern_rv="*_val_2.fq.gz")
@@ -179,13 +180,13 @@ def main():
 
 		meta = open(os.path.join(res_dir, "Merge", "merge_meta.tsv"), 'r')
 		samples = meta.readlines()
-#		p = multiprocessing.Pool()
+		#p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
 			#p.apply_async(ad.mergereads, args=(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge"))
-			ad.extract_bbmergefields(slist[0], slist[1], slist[3], res_dir, rep_dir, "Merge")
-#		p.close()
-#		p.join()
+			ad.extract_bbmergefields(slist[0], slist[1], slist[3], path_to_flist, res_dir, rep_dir, "Merge")
+		#p.close()
+		#p.join()
 
 	#Remove primers in standard procedure
 	if args.primer_removal and args.overlap_reads:
