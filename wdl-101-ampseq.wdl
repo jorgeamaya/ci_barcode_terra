@@ -97,7 +97,7 @@ workflow amplicon_decontamination_detect {
 		File BBmerge_performace_absolute_discarded_f = ampseq_bbmerge_process.BBmerge_performace_absolute_discarded
 		File Barcode_report_abs_f = ampseq_bbmerge_process.Barcode_report_abs
 		File Barcode_report_per_f = ampseq_bbmerge_process.Barcode_report_per
-		File Inser_size_f = ampseq_bbmerge_process.Inser_size
+		File Insert_size_f = ampseq_bbmerge_process.Insert_size
 		File Match_report_abs_f = ampseq_bbmerge_process.Match_report_abs
 		File Match_report_per_f = ampseq_bbmerge_process.Match_report_per
 		File barcodes_report_bbmerge_f = ampseq_bbmerge_process.barcodes_report_bbmerge
@@ -219,7 +219,7 @@ task ampseq_bbmerge_process {
 		File BBmerge_performace_absolute_discarded = "Report/BBmerge_performace_absolute_discarded.svg"	
 		File Barcode_report_abs = "Report/Barcode_report_abs.svg"
 		File Barcode_report_per = "Report/Barcode_report_per.svg"
-		File Inser_size = "Report/Insert_size.png"
+		File Insert_size = "Report/Insert_size.png"
 		File Match_report_abs = "Report/Match_report_abs.svg"
 		File Match_report_per = "Report/Match_report_per.svg"
 
