@@ -72,44 +72,44 @@ def main():
 		config_inputs = json.load(config_file)
 		path_to_fq = config_inputs['path_to_fq']
 		path_to_flist = config_inputs['path_to_flist']
-		pattern_fw = config_inputs['pattern_fw']
-		pattern_rv = config_inputs['pattern_rv']
-		read_maxlength = config_inputs['read_maxlength']
-		pairread_minlength = config_inputs['pairread_minlength']
-		merge_minlength = config_inputs['merge_minlength']
-		pr1 = config_inputs['pr1']
-		pr2 = config_inputs['pr2']
-		barcodes_file = config_inputs['barcodes_file']
-		Class = config_inputs['Class']
-		maxEE = config_inputs['maxEE']
-		trimRight = config_inputs['trimRight']
-		minLen = config_inputs['minLen']
-		truncQ = config_inputs['truncQ']
-		matchIDs = config_inputs['matchIDs']
-		max_consist = config_inputs['max_consist']
-		omegaA = config_inputs['omegaA']
-		saveRdata = config_inputs['saveRdata']
-		justConcatenate = config_inputs['justConcatenate']
-		maxMismatch = config_inputs['maxMismatch']
-		path_to_DADA2 = config_inputs['path_to_DADA2']
-		overlap_pr1 = config_inputs['overlap_pr1']
-		overlap_pr2 = config_inputs['overlap_pr2']
-		reference = config_inputs['reference']
-		adjust_mode = config_inputs['adjust_mode']
-		path_to_snv = config_inputs['path_to_snv']
-		no_ref = config_inputs['no_ref']
-		reference2 = config_inputs['reference2']
-		strain = config_inputs['strain']
-		strain2 = config_inputs['strain2']		
-		polyN = int(config_inputs['polyN'])
-		min_reads = int(config_inputs['min_reads'])
-		min_samples = int(config_inputs['min_samples'])
-		max_snv_dist = int(config_inputs['max_snv_dist'])
-		max_indel_dist = int(config_inputs['max_indel_dist'])
-		include_failed = eval(config_inputs['include_failed'])
-		exclude_bimeras = eval(config_inputs['exclude_bimeras'])
-		#amp_mask = config_inputs['amp_mask'] #Disabled. Possibly to be deprecatedi. Remove from json if finally deprecated.
-		verbose = eval(config_inputs['verbose'])
+		if 'pattern_fw' in config_inputs.keys(): pattern_fw = config_inputs['pattern_fw']
+		if 'pattern_rv' in config_inputs.keys(): pattern_rv = config_inputs['pattern_rv']
+		if 'read_maxlength' in config_inputs.keys(): read_maxlength = config_inputs['read_maxlength']
+		if 'pairread_minlength' in config_inputs.keys(): pairread_minlength = config_inputs['pairread_minlength']
+		if 'merge_minlength' in config_inputs.keys(): merge_minlength = config_inputs['merge_minlength']
+		if 'pr1' in config_inputs.keys(): pr1 = config_inputs['pr1']
+		if 'pr2' in config_inputs.keys(): pr2 = config_inputs['pr2']
+		if 'barcodes_file' in config_inputs.keys(): barcodes_file = config_inputs['barcodes_file']
+		if 'Class' in config_inputs.keys(): Class = config_inputs['Class']
+		if 'maxEE' in config_inputs.keys(): maxEE = config_inputs['maxEE']
+		if 'trimRight' in config_inputs.keys():	trimRight = config_inputs['trimRight']
+		if 'minLen' in config_inputs.keys(): minLen = config_inputs['minLen']
+		if 'truncQ' in config_inputs.keys(): truncQ = config_inputs['truncQ']
+		if 'matchIDs' in config_inputs.keys(): matchIDs = config_inputs['matchIDs']
+		if 'max_consist' in config_inputs.keys(): max_consist = config_inputs['max_consist']
+		if 'omegaA' in config_inputs.keys(): omegaA = config_inputs['omegaA']
+		if 'saveRdata' in config_inputs.keys(): saveRdata = config_inputs['saveRdata']
+		if 'justConcatenate' in config_inputs.keys(): justConcatenate = config_inputs['justConcatenate']
+		if 'maxMismatch' in config_inputs.keys(): maxMismatch = config_inputs['maxMismatch']
+		if 'path_to_DADA2' in config_inputs.keys(): path_to_DADA2 = config_inputs['path_to_DADA2']
+		if 'overlap_pr1' in config_inputs.keys(): overlap_pr1 = config_inputs['overlap_pr1']
+		if 'overlap_pr2' in config_inputs.keys(): overlap_pr2 = config_inputs['overlap_pr2']
+		if 'reference' in config_inputs.keys():	reference = config_inputs['reference']
+		if 'adjust_mode' in config_inputs.keys(): adjust_mode = config_inputs['adjust_mode']
+		if 'path_to_snv' in config_inputs.keys(): path_to_snv = config_inputs['path_to_snv']
+		if 'no_ref' in config_inputs.keys(): no_ref = config_inputs['no_ref']
+		if 'reference2' in config_inputs.keys(): reference2 = config_inputs['reference2']
+		if 'strain' in config_inputs.keys(): strain = config_inputs['strain']
+		if 'strain2' in config_inputs.keys(): strain2 = config_inputs['strain2']		
+		if 'polyN' in config_inputs.keys(): polyN = int(config_inputs['polyN'])
+		if 'min_reads' in config_inputs.keys():	min_reads = int(config_inputs['min_reads'])
+		if 'min_samples' in config_inputs.keys(): min_samples = int(config_inputs['min_samples'])
+		if 'max_snv_dist' in config_inputs.keys(): max_snv_dist = int(config_inputs['max_snv_dist'])
+		if 'max_indel_dist' in config_inputs.keys(): max_indel_dist = int(config_inputs['max_indel_dist'])
+		if 'include_failed' in config_inputs.keys(): include_failed = eval(config_inputs['include_failed'])
+		if 'exclude_bimeras' in config_inputs.keys(): exclude_bimeras = eval(config_inputs['exclude_bimeras'])
+		#if 'amp_mask' in config_inputs.keys(): amp_mask = config_inputs['amp_mask'] #Disabled. Possibly to be deprecatedi. Remove from json if finally deprecated.
+		if 'verbose' in config_inputs.keys(): verbose = eval(config_inputs['verbose'])
 		
 	### EXEC
 
@@ -194,13 +194,13 @@ def main():
 
 		meta = open(os.path.join(res_dir, "AdaptorRem", "adaptorrem_meta.tsv"), 'r')
 		samples = meta.readlines()
-		p = multiprocessing.Pool()
+#		p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
 			#p.apply_async(ad.trim_primer, args=(slist[0], slist[1], slist[2], res_dir, "PrimerRem", pr1, pr2, "prim"))
 			ad.trim_primer(slist[0], slist[1], slist[2], res_dir, "PrimerRem", pr1, pr2, "prim")
-		p.close()
-		p.join()
+#		p.close()
+#		p.join()
 
 		ad.create_meta(os.path.join(res_dir,"PrimerRem"), res_dir, "PrimerRem", "primrem_meta.tsv",
 			pattern_fw="*_prim_1.fq.gz", pattern_rv="*_prim_2.fq.gz")
@@ -240,13 +240,13 @@ def main():
 		samples = meta.readlines()
 
 		#Trim primers off Overlapping short targets and demux them to different file
-		p = multiprocessing.Pool()
+		#p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
 			ad.trim_primer(slist[0], slist[1], slist[2], res_dir, "PrimerRem", overlap_pr1, overlap_pr2, "mixed_op", True)
 			#p.apply_async(ad.trim_primer, args=(slist[0], slist[1], slist[2], res_dir, "PrimerRem", overlap_pr1, overlap_pr2, "mixed_op", True))
-		p.close()
-		p.join()
+		#p.close()
+		#p.join()
 
 		#Metafile for trimmed overlapping target reads
 		ad.create_meta(os.path.join(res_dir, "PrimerRem"), res_dir, "PrimerRem", "mixed_op_prim_meta.tsv",
@@ -259,13 +259,13 @@ def main():
 
 		#Trim primers off second subset of non-op long targets 
 		samples = temp_meta.readlines()
-		p = multiprocessing.Pool()
+		#p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
 			#p.apply_async(ad.trim_primer, args=(slist[0], slist[1], slist[2], res_dir, "PrimerRem", pr1, pr2, "mixed_nop"))
 			ad.trim_primer(slist[0], slist[1], slist[2], res_dir, "PrimerRem", pr1, pr2, "mixed_nop")
-		p.close()
-		p.join()
+		#p.close()
+		#p.join()
 
 		#Metafile for trimmed non-op target reads
 		ad.create_meta(os.path.join(res_dir, "PrimerRem"), res_dir, "PrimerRem", "mixed_nop_prim_meta.tsv", 
@@ -311,26 +311,26 @@ def main():
 		samples = meta.readlines()
 
 		#Use the trim functions to separate files, but do not trim the primer and barcode
-		p = multiprocessing.Pool()
+#		p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
 			ad.trim_primer(slist[0], slist[1], slist[2], res_dir, "PrimerRem_OP", pr1, pr2, "mixed_op", True)
 			#p.apply_async(ad.trim_primer, args=(slist[0], slist[1], slist[2], res_dir, "PrimerRem_OP", pr1, pr2, "mixed_op", True))
-		p.close()
-		p.join()
+#		p.close()
+#		p.join()
 
 		#Metafile for un-trimmed op target reads
 		ad.create_meta(os.path.join(res_dir, "PrimerRem_OP"), res_dir, "PrimerRem_OP", "mixed_op_prim_meta.tsv",
 			pattern_fw="*_temp_1.fq.gz", pattern_rv="*_temp_2.fq.gz")
 
 		#Trim primers off Non Overlapping short targets and demux them to different file
-		p = multiprocessing.Pool()
+#		p = multiprocessing.Pool()
 		for sample in samples:
 			slist = sample.split()
 			ad.trim_primer(slist[0], slist[1], slist[2], res_dir, "PrimerRem_NOP", overlap_pr1, overlap_pr2, "mixed_nop", True)
 			#p.apply_async(ad.trim_primer, args=(slist[0], slist[1], slist[2], res_dir, "PrimerRem_NOP", overlap_pr1, overlap_pr2, "mixed_op", True))
-		p.close()
-		p.join()
+#		p.close()
+#		p.join()
 
 		#Metafile for un-trimmed nop target reads
 		ad.create_meta(os.path.join(res_dir, "PrimerRem_NOP"), res_dir, "PrimerRem_NOP", "mixed_nop_prim_meta.tsv",

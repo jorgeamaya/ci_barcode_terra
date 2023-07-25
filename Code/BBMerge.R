@@ -33,14 +33,14 @@ mergedata_per <- mergedata_per[order(-mergedata_per[, 1],
                                         -mergedata_per[, 2], 
                                         -mergedata_per[, 3]),]
  
- #Add discarded count AFTER the columns have been organized
- rownames(mergedata) = mergedata$SampleID
- mergedata = mergedata[rownames(mergedata_join), ]
- mergedata_join$Discarded = mergedata$Pairs - mergedata$Joined - mergedata$Ambiguous - mergedata$No_Solution
- mergedata_per$DiscardedP = 100 - mergedata_per$JoinedP - mergedata_per$AmbiguousP - mergedata_per$No_SolutionP
- 
- col_order = c("Joined", "Ambiguous", "No_Solution", "Discarded")
- col_order_p = c("JoinedP", "AmbiguousP", "No_SolutionP", "DiscardedP")
+#Add discarded count AFTER the columns have been organized
+rownames(mergedata) = mergedata$SampleID
+mergedata = mergedata[rownames(mergedata_join), ]
+mergedata_join$Discarded = mergedata$Pairs - mergedata$Joined - mergedata$Ambiguous - mergedata$No_Solution
+mergedata_per$DiscardedP = 100 - mergedata_per$JoinedP - mergedata_per$AmbiguousP - mergedata_per$No_SolutionP
+
+col_order = c("Joined", "Ambiguous", "No_Solution", "Discarded")
+col_order_p = c("JoinedP", "AmbiguousP", "No_SolutionP", "DiscardedP")
  
 mergedata_join = mergedata_join[, col_order]
 mergedata_per = mergedata_per[, col_order_p]
