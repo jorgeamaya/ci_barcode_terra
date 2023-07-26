@@ -210,7 +210,7 @@ def extract_bbmergefields(sampleid, mergefile, bbreportfile, path_to_flist, res_
 
 			o.write('\t'.join(bbmergedata.values()) + '\n')
 
-		cmd = ['Rscript', os.path.join('Code/runBBMergecontamination.R'),
+		cmd = ['Rscript', os.path.join('/Code/runBBMergecontamination.R'),
 		'-p', f'{mergefile}',
 		'-d', os.path.join(rep_dir, subdir),
 		'-b', path_to_flist]
@@ -349,7 +349,7 @@ def run_dada2(path_to_DADA2, path_to_meta, path_to_fq, Class, maxEE, trimRight, 
 			program = 'runDADA2contamination.R' 
 
 		bimera = '--bimera'
-		cmd = ['Rscript', os.path.join(path_to_DADA2, program),
+		cmd = ['Rscript', os.path.join("/", path_to_DADA2, program),
 		'-p', f'{path_to_meta}',
 		'-r', f'{path_to_fq}',
 		'-d', os.path.join(res_dir, subdir),

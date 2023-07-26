@@ -51,7 +51,7 @@ CONFIG.JSON
 
 #conda activate ampseq_env
 
-python Code/Amplicon_TerraPipeline.py --config config_MiSeq.json --overlap_reads --bbmerge_report \
+python Code/Amplicon_TerraPipeline.py --config config_MiSeq.json --overlap_reads \
 --meta \
 --repo \
 --adaptor_removal \

@@ -7,15 +7,11 @@ path_to_flist = args[3]
 joined_threshold = as.numeric(args[4])
 contamination_threshold = as.numeric(args[5])
 
-#data_dir = "/Users/jorgeamaya/Desktop/ci_barcode_terra/Report/Merge/" 
-#out_dir = "/Users/jorgeamaya/Desktop/ci_barcode_terra/Report/"
-#path_to_flist = "/Users/jorgeamaya/Desktop/ci_barcode_terra/Data/barcodes_matches.csv"
+#data_dir = "/Users/jorgeamaya/Desktop/ci_barcode_terra_dada2/Report/DADA2_Contamination/" 
+#out_dir = "/Users/jorgeamaya/Desktop/ci_barcode_terra_dada2/Report/"
+#path_to_flist = "/Users/jorgeamaya/Desktop/ci_barcode_terra_dada2/Data/barcodes_matches.csv"
 #joined_threshold = 1000
 #contamination_threshold = 0.5
-
-#data_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Report/DADA2_Contamination/'
-#data_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Report/Merge/'
-#out_dir = '/Users/jorgeamaya/Desktop/Broad_Test/amplicon_decontamination_pipeline/Report/'
 
 if (!require("ggplot2")) {
   install.packages("ggplot2", repos="http://cran.rstudio.com/")
@@ -388,7 +384,7 @@ if(basename(data_dir) == 'Merge'){
   #Adjust table to include samples with no reads
   rows = rownames(m_sample_status_p_melted_reshaped) 
   no_mergers = samples_order[!rows %in% samples_order]
-  rows[which(rows == 'NA')] = no_mergers  
+  rows[grep('^NA', rows)] = no_mergers  
   rownames(m_sample_status_p_melted_reshaped) = rows
   
   Below_Threshold_Flag = vector()
