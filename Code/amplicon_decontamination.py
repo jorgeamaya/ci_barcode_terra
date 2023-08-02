@@ -210,7 +210,7 @@ def extract_bbmergefields(sampleid, mergefile, bbreportfile, path_to_flist, res_
 
 			o.write('\t'.join(bbmergedata.values()) + '\n')
 
-		cmd = ['Rscript', os.path.join('Code/runBBMergecontamination.R'),
+		cmd = ['Rscript', os.path.join('/Code/runBBMergecontamination.R'),
 		'-p', f'{mergefile}',
 		'-d', os.path.join(rep_dir, subdir),
 		'-b', path_to_flist]
