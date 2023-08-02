@@ -66,7 +66,7 @@ python Code/Amplicon_TerraPipeline.py --config config_MiSeq.json --overlap_reads
 #if [ -d "$PWD/Report/Merge/" ]; then
 	#These plots are optimized for datasets up to 100 specimens. This is by design as a standard illumina plate has 96 wells. Larger dataset will still produce the plots, but some column names will be missing. Names longer than 60 characters will extend outside the plotting area.
 #	Rscript Code/BBMerge.R "$PWD/Report/Merge/" "$PWD/Report/"
-#	Rscript Code/Contamination.R "$PWD/Report/Merge/" "$PWD/Report/" "$PWD/Data/" '1000' '0.5'
+#	Rscript Code/Contamination.R "$PWD/Report/Merge/" "$PWD/Report/" "$PWD/Data/barcodes_matches.csv" '1000' '0.5'
 #fi
 
 #if [ -d "$PWD/Report/DADA2_Contamination/" ]; then
