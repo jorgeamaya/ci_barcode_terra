@@ -101,6 +101,11 @@ samples_order = as.character(barcodes_list$sample_id)
 ###MATCH STATUS PER SAMPLE ID #####
 ###################################
 #Subset the table to the desired experiments
+print("HERE IS THE ERROR")
+print(df)
+print(samples_order)
+
+
 df = df[df$sample_id %in% samples_order,] 
 
 m_sample_status = table(df[,c("sample_id", "match_status")])

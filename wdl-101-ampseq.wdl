@@ -85,7 +85,7 @@ task ampseq_bbmerge_process {
 	Rscript /Code/BBMerge.R Report/Merge/ Report/
 
 	ls Report/Merge/
-	#Rscript /Code/Contamination.R Report/Merge/ Report/ ~{path_to_flist} ~{joined_threshold} ~{contamination_threshold}
+	Rscript /Code/Contamination.R Report/Merge/ Report/ ~{path_to_flist} ~{joined_threshold} ~{contamination_threshold}
 	tar -czvf Merge.tar.gz Results/Merge
 	find . -type f
 	>>>
