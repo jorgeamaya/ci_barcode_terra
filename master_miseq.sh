@@ -70,5 +70,5 @@ python Code/Amplicon_TerraPipeline.py --config config_MiSeq.json --overlap_reads
 #fi
 
 #if [ -d "$PWD/Report/DADA2_Contamination/" ]; then
-#	Rscript Code/Contamination.R "$PWD/Report/DADA2_Contamination/" "$PWD/Report/" "$PWD/Data/" '1000' '0.5'
+#	Rscript Code/Contamination.R "$PWD/Report/DADA2_Contamination/" "$PWD/Report/" "$PWD/Data/barcodes_matches.csv" '1000' '0.5'
 #fi
