@@ -32,7 +32,7 @@ if (!require("viridis")) {
 qprofile <- function(fastq, work_dir) {
   # Plot Quality profiles before filtering
   fastq_name = sub("\\.fq\\.gz$", "", basename(fastq))
-  pdf(paste0(work_dir,"/QProfile/", fastq_name, ".pdf"))
+  svg(paste0(work_dir,"/QProfile/", fastq_name, ".svg"))
   try(print(plotQualityProfile(fastq)), silent = TRUE)
   dev.off()
 }
@@ -275,10 +275,10 @@ print("starting error model learning for reverse reads...")
 errR <- learnErrors(filtRs, multithread=TRUE, verbose=2, randomize=randomize, MAX_CONSIST=max_consist)
 
 #Plot the Errors
-pdf(paste0(work_dir,"/errF.pdf"))
+svg(paste0(work_dir,"/errF.svg"))
 try(print(plotErrors(errF, nominalQ=TRUE)), silent = TRUE)
 dev.off()
-pdf(paste0(work_dir,"/errR.pdf"))
+svg(paste0(work_dir,"/errR.svg"))
 try(print(plotErrors(errR, nominalQ=TRUE)), silent = TRUE)
 dev.off()
 
@@ -424,7 +424,7 @@ track_plot_per <- track_plot_per[order(-track_plot_per[,1],
 
 color_vector = viridis(nrow(t(as.matrix(track_plot))), option = "D")
 
-pdf(paste0(work_dir,"/stacked_barplot.pdf"), width = 12)
+svg(paste0(work_dir,"/stacked_barplot.svg"), width = 12)
 par(mar = c(14, 4, 6, 2), xpd = TRUE) # increase the bottom margin
 barplot(
   t(as.matrix(track_plot)),
@@ -453,7 +453,7 @@ legend(
 
 dev.off()
 
-pdf(paste0(work_dir,"/stacked_barplot_per.pdf"), width = 12)
+svg(paste0(work_dir,"/stacked_barplot_per.svg"), width = 12)
 par(mar = c(14, 4, 6, 2), xpd = TRUE) # increase the bottom margin
 barplot(
   t(as.matrix(track_plot_per)),
@@ -483,7 +483,7 @@ legend(
 dev.off()
 
 #Show the barplot of length distribution
-pdf(paste0(work_dir,"/sequences_barplot.pdf"))
+svg(paste0(work_dir,"/sequences_barplot.svg"))
 print(barplot(table(nchar(getSequences(seqtab)))))
 dev.off()
 
